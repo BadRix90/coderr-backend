@@ -200,6 +200,46 @@
 				"header": []
 			},
 			"response": []
+		},
+		{
+			"name": "Get Offer Detail",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Get Reviews List",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Update Profile - kevin",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token 16f78502f48cb55f238f03def930682028543c54",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"first_name\": \"Kevin\",\r\n    \"last_name\": \"Weber\",\r\n    \"description\": \"Full-Stack Developer\",\r\n    \"location\": \"Berlin\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{base_url}}/profile/2/"
+			},
+			"response": []
 		}
 	]
 }
