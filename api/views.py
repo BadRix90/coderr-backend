@@ -24,7 +24,8 @@ def login_view(request):
         token, created = Token.objects.get_or_create(user=user)
         return Response({
             'token': token.key,
-            'user_id': user.id,
+            'user_id': user.id,  # ← snake_case
+            'userId': user.id,   # ← UND camelCase
             'username': user.username
         })
     return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -40,6 +41,7 @@ def registration_view(request):
         return Response({
             'token': token.key,
             'user_id': user.id,
+            'userId': user.id,
             'username': user.username
         }, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -49,6 +51,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
     permission_classes = [IsAuthenticated]
+    lookup_field = 'user' 
     
     @action(detail=False, methods=['get'], url_path='business')
     def business_profiles(self, request):
@@ -70,6 +73,7 @@ class OfferViewSet(viewsets.ModelViewSet):
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['title', 'description']
     ordering_fields = ['created_at', 'title']
+    # pagination_class = None  
     
     def get_queryset(self):
         queryset = Offer.objects.all()
@@ -100,7 +104,7 @@ class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
-    
+    pagination_class = None  
     def get_queryset(self):
         return Order.objects.filter(buyer=self.request.user)
     
@@ -114,6 +118,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ['created_at', 'rating']
+    pagination_class = None  # ← NEU: Pagination deaktivieren
     
     def get_queryset(self):
         queryset = Review.objects.all()

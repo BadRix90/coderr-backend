@@ -1,12 +1,35 @@
+# api/admin.py
+
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.contrib.auth.models import User
 from .models import UserProfile, Offer, OfferDetail, Order, Review
 
 
+# Inline für UserProfile im User-Admin
+class UserProfileInline(admin.StackedInline):
+    model = UserProfile
+    can_delete = False
+    verbose_name_plural = 'Profile'
+    fk_name = 'user'
+
+
+# Erweitere den Django User Admin
+class UserAdmin(BaseUserAdmin):
+    inlines = (UserProfileInline,)
+
+
+# Re-register UserAdmin
+admin.site.unregister(User)
+admin.site.register(User, UserAdmin)
+
+
+# Normale Admin-Registration
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ['user', 'type', 'location', 'created_at']
+    list_display = ['user', 'type', 'location', 'tel', 'created_at']
     list_filter = ['type', 'created_at']
-    search_fields = ['user__username', 'location']
+    search_fields = ['user__username', 'location', 'tel']
 
 
 @admin.register(Offer)
