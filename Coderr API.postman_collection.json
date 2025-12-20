@@ -1,0 +1,205 @@
+{
+	"info": {
+		"_postman_id": "d4be85d1-e3d1-45c0-a895-fb2667b6b3ea",
+		"name": "Coderr API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "32391789"
+	},
+	"item": [
+		{
+			"name": "Login - andrey",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"andrey\",\r\n    \"password\": \"asdasd\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{base_url}}/login/"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Profile - andrey",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token 8ad38bea10b66648b5cd2b4be512384558578714",
+						"type": "text"
+					}
+				],
+				"url": "{{base_url}}/profile/2/"
+			},
+			"response": []
+		},
+		{
+			"name": "Login - kevin",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"kevin\",\r\n    \"password\": \"asdasd24\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{base_url}}/login/"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Profile - kevin",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token 16f78502f48cb55f238f03def930682028543c54",
+						"type": "text"
+					}
+				],
+				"url": "{{base_url}}/profile/2/"
+			},
+			"response": []
+		},
+		{
+			"name": "Registration - new customer",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"testuser\",\r\n    \"email\": \"test@test.de\",\r\n    \"password\": \"test1234\",\r\n    \"first_name\": \"Test\",\r\n    \"last_name\": \"User\",\r\n    \"type\": \"customer\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{base_url}}/registration/"
+			},
+			"response": []
+		},
+		{
+			"name": "Create Offer",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token 16f78502f48cb55f238f03def930682028543c54",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Website Development\",\r\n    \"description\": \"Professional website development service\",\r\n    \"details\": [\r\n        {\r\n            \"title\": \"Basic Package\",\r\n            \"revisions\": 2,\r\n            \"delivery_time_in_days\": 7,\r\n            \"price\": 299.99,\r\n            \"features\": [\"Responsive Design\", \"5 Pages\", \"Contact Form\"],\r\n            \"offer_type\": \"basic\"\r\n        },\r\n        {\r\n            \"title\": \"Standard Package\",\r\n            \"revisions\": 5,\r\n            \"delivery_time_in_days\": 14,\r\n            \"price\": 599.99,\r\n            \"features\": [\"Responsive Design\", \"10 Pages\", \"Contact Form\", \"SEO\"],\r\n            \"offer_type\": \"standard\"\r\n        },\r\n        {\r\n            \"title\": \"Premium Package\",\r\n            \"revisions\": -1,\r\n            \"delivery_time_in_days\": 21,\r\n            \"price\": 999.99,\r\n            \"features\": [\"Responsive Design\", \"Unlimited Pages\", \"Contact Form\", \"SEO\", \"CMS\"],\r\n            \"offer_type\": \"premium\"\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{base_url}}/offers/"
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Offers",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token 16f78502f48cb55f238f03def930682028543c54",
+						"type": "text"
+					}
+				],
+				"url": "{{base_url}}/offers/"
+			},
+			"response": []
+		},
+		{
+			"name": "Create Order",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token 8ad38bea10b66648b5cd2b4be51230455057071d",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"offer_detail\": 1,\r\n    \"status\": \"in_progress\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{base_url}}/orders/"
+			},
+			"response": []
+		},
+		{
+			"name": "Create Review",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token 8ad38bea10b66648b5cd2b4be51230455057071d",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"business_user\": 3,\r\n    \"rating\": 5,\r\n    \"description\": \"Excellent work! Very professional and fast delivery.\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{base_url}}/reviews/"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Base Info",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Get Order Count - kevin",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Get Reviews - kevin",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}
