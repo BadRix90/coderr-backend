@@ -46,7 +46,8 @@ def login_view(request):
             'token': token.key,
             'user_id': user.id,
             'userId': user.id,
-            'username': user.username
+            'username': user.username,
+            'email': user.email
         })
     return Response(
         {'error': 'Invalid credentials'}, 
@@ -74,7 +75,8 @@ def registration_view(request):
             'token': token.key,
             'user_id': user.id,
             'userId': user.id,
-            'username': user.username
+            'username': user.username,
+            'email': user.email
         }, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -187,7 +189,6 @@ class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
-    pagination_class = None
     
     def get_queryset(self):
         """
@@ -221,8 +222,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ['created_at', 'rating']
-    pagination_class = None
-    
+        
     def get_queryset(self):
         """
         Get filtered queryset based on query parameters.
@@ -264,8 +264,14 @@ def order_count_view(request, profile_id):
         profile_id: ID of business user profile
         
     Returns:
-        Response: Order count
+        Response: Order count or 404 if profile not found
     """
+    if not User.objects.filter(id=profile_id).exists():
+        return Response(
+            {'error': 'User not found'}, 
+            status=status.HTTP_404_NOT_FOUND
+        )
+    
     count = Order.objects.filter(
         offer_detail__offer__creator_id=profile_id,
         status='in_progress'
@@ -284,8 +290,14 @@ def completed_order_count_view(request, profile_id):
         profile_id: ID of business user profile
         
     Returns:
-        Response: Order count
+        Response: Order count or 404 if profile not found
     """
+    if not User.objects.filter(id=profile_id).exists():
+        return Response(
+            {'error': 'User not found'}, 
+            status=status.HTTP_404_NOT_FOUND
+        )
+    
     count = Order.objects.filter(
         offer_detail__offer__creator_id=profile_id,
         status='completed'
