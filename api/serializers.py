@@ -32,7 +32,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     """
     
     username = serializers.CharField(source='user.username', read_only=True)
-    email = serializers.CharField(source='user.email', read_only=True)
+    email = serializers.CharField(source='user.email')
     first_name = serializers.CharField(source='user.first_name')
     last_name = serializers.CharField(source='user.last_name')
     
@@ -64,6 +64,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             user = instance.user
             user.first_name = user_data.get('first_name', user.first_name)
             user.last_name = user_data.get('last_name', user.last_name)
+            user.email = user_data.get('email', user.email)
             user.save()
         
         return super().update(instance, validated_data)

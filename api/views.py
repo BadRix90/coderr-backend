@@ -92,7 +92,6 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
     permission_classes = [IsAuthenticated]
-    lookup_field = 'user' 
     
     @action(detail=False, methods=['get'], url_path='business')
     def business_profiles(self, request):
