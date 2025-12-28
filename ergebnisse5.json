@@ -1,0 +1,892 @@
+{
+	"id": "7975611e-c993-46b9-895f-5a47e07408f4",
+	"name": "Coderr API - COMPLETE WITH TESTS",
+	"timestamp": "2025-12-28T13:10:57.742Z",
+	"collection_id": "32391789-2d6bc872-958b-467f-bac7-dbdc224bce61",
+	"folder_id": 0,
+	"environment_id": "32391789-4a1202b3-e991-402c-b6b8-5dcf22c0bf6c",
+	"totalPass": 45,
+	"delay": 0,
+	"persist": true,
+	"status": "finished",
+	"startedAt": "2025-12-28T13:10:53.696Z",
+	"totalFail": 0,
+	"results": [
+		{
+			"id": "de9cfc1d-62ef-4812-a097-281f8a82232e",
+			"name": "Registration - Customer",
+			"url": "http://127.0.0.1:8000/api/registration/",
+			"time": 516,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"Status code is 201": true,
+				"Response has user_id": true
+			},
+			"testPassFailCounts": {
+				"Status code is 201": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response has user_id": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				516
+			],
+			"allTests": [
+				{
+					"Status code is 201": true,
+					"Response has user_id": true
+				}
+			]
+		},
+		{
+			"id": "4a1f7c5b-ee67-4e0e-89dc-abb9fcb3fc2f",
+			"name": "Registration - Business",
+			"url": "http://127.0.0.1:8000/api/registration/",
+			"time": 529,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"Status code is 201": true,
+				"Response has user_id": true
+			},
+			"testPassFailCounts": {
+				"Status code is 201": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response has user_id": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				529
+			],
+			"allTests": [
+				{
+					"Status code is 201": true,
+					"Response has user_id": true
+				}
+			]
+		},
+		{
+			"id": "2fdb5c4c-bbd2-4daa-8131-4de808bf8aa4",
+			"name": "Login",
+			"url": "http://127.0.0.1:8000/api/login/",
+			"time": 474,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Response has token": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response has token": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				474
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Response has token": true
+				}
+			]
+		},
+		{
+			"id": "f4f40a83-8f42-4a7d-b55f-9138dfe007fc",
+			"name": "Get Profile by ID",
+			"url": "http://127.0.0.1:8000/api/profile/10/",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Response has profile data": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response has profile data": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Response has profile data": true
+				}
+			]
+		},
+		{
+			"id": "6176f400-5eaa-4a34-abb6-c3a0b56ee7d7",
+			"name": "Update Profile",
+			"url": "http://127.0.0.1:8000/api/profile/10/",
+			"time": 15,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Description was updated": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Description was updated": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				15
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Description was updated": true
+				}
+			]
+		},
+		{
+			"id": "3cd0597e-c6d9-400e-b677-09f73210b004",
+			"name": "Get Business Profiles",
+			"url": "http://127.0.0.1:8000/api/profiles/business/",
+			"time": 6,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Returns array of profiles": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Returns array of profiles": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				6
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Returns array of profiles": true
+				}
+			]
+		},
+		{
+			"id": "729234aa-968e-47fd-b58e-95ba86bdfb14",
+			"name": "Get Customer Profiles",
+			"url": "http://127.0.0.1:8000/api/profiles/customer/",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Returns array of profiles": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Returns array of profiles": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Returns array of profiles": true
+				}
+			]
+		},
+		{
+			"id": "6d921199-f026-4196-8386-b15ae73ae901",
+			"name": "Get All Offers (Paginated)",
+			"url": "http://127.0.0.1:8000/api/offers/?page=1",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Response has pagination": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response has pagination": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Response has pagination": true
+				}
+			]
+		},
+		{
+			"id": "a6d761e5-9143-420e-b034-fbc908ead3d3",
+			"name": "Create Offer",
+			"url": "http://127.0.0.1:8000/api/offers/",
+			"time": 37,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"Status code is 201": true,
+				"Offer has details": true
+			},
+			"testPassFailCounts": {
+				"Status code is 201": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Offer has details": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				37
+			],
+			"allTests": [
+				{
+					"Status code is 201": true,
+					"Offer has details": true
+				}
+			]
+		},
+		{
+			"id": "fd68a021-60de-4e31-9adf-3e700a08cca2",
+			"name": "Get Offer by ID",
+			"url": "http://127.0.0.1:8000/api/offers/9/",
+			"time": 6,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Offer has correct structure": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Offer has correct structure": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				6
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Offer has correct structure": true
+				}
+			]
+		},
+		{
+			"id": "0d12089f-2998-4129-8860-bb6615eeae13",
+			"name": "Update Offer",
+			"url": "http://127.0.0.1:8000/api/offers/9/",
+			"time": 15,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Title was updated": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Title was updated": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				15
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Title was updated": true
+				}
+			]
+		},
+		{
+			"id": "e5a5708f-6cde-4b17-a65b-acd9118b5506",
+			"name": "Get Offer Detail by ID",
+			"url": "http://127.0.0.1:8000/api/offerdetails/25/",
+			"time": 6,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Offer detail has correct structure": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Offer detail has correct structure": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				6
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Offer detail has correct structure": true
+				}
+			]
+		},
+		{
+			"id": "72ea5320-e5e8-4920-b602-eecf387441fc",
+			"name": "Get My Orders",
+			"url": "http://127.0.0.1:8000/api/orders/",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Response has pagination": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response has pagination": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Response has pagination": true
+				}
+			]
+		},
+		{
+			"id": "ca93fc39-c886-43a5-90cf-86d75eb1f76f",
+			"name": "Create Order",
+			"url": "http://127.0.0.1:8000/api/orders/",
+			"time": 13,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"Status code is 201": true,
+				"Order created successfully": true
+			},
+			"testPassFailCounts": {
+				"Status code is 201": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Order created successfully": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				13
+			],
+			"allTests": [
+				{
+					"Status code is 201": true,
+					"Order created successfully": true
+				}
+			]
+		},
+		{
+			"id": "22bc6026-3830-49f3-8342-420292250f5d",
+			"name": "Update Order Status",
+			"url": "http://127.0.0.1:8000/api/orders/9/",
+			"time": 17,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Order status was updated": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Order status was updated": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				17
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Order status was updated": true
+				}
+			]
+		},
+		{
+			"id": "d2030b16-bb0a-4636-979f-8e87a7fdce98",
+			"name": "Delete Order (Admin only)",
+			"url": "http://127.0.0.1:8000/api/orders/9/",
+			"time": 20,
+			"responseCode": {
+				"code": 204,
+				"name": "No Content"
+			},
+			"tests": {
+				"Status code is 204 or 403": true
+			},
+			"testPassFailCounts": {
+				"Status code is 204 or 403": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				20
+			],
+			"allTests": [
+				{
+					"Status code is 204 or 403": true
+				}
+			]
+		},
+		{
+			"id": "6641aebe-9cb8-4924-ab46-0fe468b8ef87",
+			"name": "Get Order Count (In Progress)",
+			"url": "http://127.0.0.1:8000/api/order-count/10/",
+			"time": 5,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Response has order_count": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response has order_count": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Response has order_count": true
+				}
+			]
+		},
+		{
+			"id": "2ad6ba9f-89b8-4417-bcd0-7c9861dbfcd8",
+			"name": "Get Completed Order Count",
+			"url": "http://127.0.0.1:8000/api/completed-order-count/10/",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Response has order_count": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response has order_count": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Response has order_count": true
+				}
+			]
+		},
+		{
+			"id": "48102ca6-83b9-491e-8d15-0929c81017d3",
+			"name": "Get All Reviews",
+			"url": "http://127.0.0.1:8000/api/reviews/",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Response has pagination": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response has pagination": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Response has pagination": true
+				}
+			]
+		},
+		{
+			"id": "382227cb-5561-4dd7-88be-5a5c802250cb",
+			"name": "Create Review",
+			"url": "http://127.0.0.1:8000/api/reviews/",
+			"time": 13,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"Status code is 201": true,
+				"Review created successfully": true
+			},
+			"testPassFailCounts": {
+				"Status code is 201": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Review created successfully": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				13
+			],
+			"allTests": [
+				{
+					"Status code is 201": true,
+					"Review created successfully": true
+				}
+			]
+		},
+		{
+			"id": "630f4499-e6cf-4d6b-b081-ed251ebaf170",
+			"name": "Update Review",
+			"url": "http://127.0.0.1:8000/api/reviews/8/",
+			"time": 13,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Review was updated": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Review was updated": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				13
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Review was updated": true
+				}
+			]
+		},
+		{
+			"id": "8dfc0793-0fe1-4d68-a1f7-60149817389e",
+			"name": "Delete Review",
+			"url": "http://127.0.0.1:8000/api/reviews/8/",
+			"time": 13,
+			"responseCode": {
+				"code": 204,
+				"name": "No Content"
+			},
+			"tests": {
+				"Status code is 204": true
+			},
+			"testPassFailCounts": {
+				"Status code is 204": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				13
+			],
+			"allTests": [
+				{
+					"Status code is 204": true
+				}
+			]
+		},
+		{
+			"id": "4e363d65-4908-4294-a4b5-f2f9cba8e1b7",
+			"name": "Get Base Info",
+			"url": "http://127.0.0.1:8000/api/base-info/",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Response has correct structure": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response has correct structure": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Response has correct structure": true
+				}
+			]
+		},
+		{
+			"id": "93bb246e-a86d-4727-82a3-48106ede0b34",
+			"name": "Delete Offer (Cleanup)",
+			"url": "http://127.0.0.1:8000/api/offers/9/",
+			"time": 14,
+			"responseCode": {
+				"code": 204,
+				"name": "No Content"
+			},
+			"tests": {
+				"Status code is 204": true
+			},
+			"testPassFailCounts": {
+				"Status code is 204": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				14
+			],
+			"allTests": [
+				{
+					"Status code is 204": true
+				}
+			]
+		}
+	],
+	"count": 1,
+	"totalTime": 1740,
+	"collection": {
+		"requests": [
+			{
+				"id": "de9cfc1d-62ef-4812-a097-281f8a82232e",
+				"method": "POST"
+			},
+			{
+				"id": "4a1f7c5b-ee67-4e0e-89dc-abb9fcb3fc2f",
+				"method": "POST"
+			},
+			{
+				"id": "2fdb5c4c-bbd2-4daa-8131-4de808bf8aa4",
+				"method": "POST"
+			},
+			{
+				"id": "f4f40a83-8f42-4a7d-b55f-9138dfe007fc",
+				"method": "GET"
+			},
+			{
+				"id": "6176f400-5eaa-4a34-abb6-c3a0b56ee7d7",
+				"method": "PATCH"
+			},
+			{
+				"id": "3cd0597e-c6d9-400e-b677-09f73210b004",
+				"method": "GET"
+			},
+			{
+				"id": "729234aa-968e-47fd-b58e-95ba86bdfb14",
+				"method": "GET"
+			},
+			{
+				"id": "6d921199-f026-4196-8386-b15ae73ae901",
+				"method": "GET"
+			},
+			{
+				"id": "a6d761e5-9143-420e-b034-fbc908ead3d3",
+				"method": "POST"
+			},
+			{
+				"id": "fd68a021-60de-4e31-9adf-3e700a08cca2",
+				"method": "GET"
+			},
+			{
+				"id": "0d12089f-2998-4129-8860-bb6615eeae13",
+				"method": "PATCH"
+			},
+			{
+				"id": "e5a5708f-6cde-4b17-a65b-acd9118b5506",
+				"method": "GET"
+			},
+			{
+				"id": "72ea5320-e5e8-4920-b602-eecf387441fc",
+				"method": "GET"
+			},
+			{
+				"id": "ca93fc39-c886-43a5-90cf-86d75eb1f76f",
+				"method": "POST"
+			},
+			{
+				"id": "22bc6026-3830-49f3-8342-420292250f5d",
+				"method": "PATCH"
+			},
+			{
+				"id": "d2030b16-bb0a-4636-979f-8e87a7fdce98",
+				"method": "DELETE"
+			},
+			{
+				"id": "6641aebe-9cb8-4924-ab46-0fe468b8ef87",
+				"method": "GET"
+			},
+			{
+				"id": "2ad6ba9f-89b8-4417-bcd0-7c9861dbfcd8",
+				"method": "GET"
+			},
+			{
+				"id": "48102ca6-83b9-491e-8d15-0929c81017d3",
+				"method": "GET"
+			},
+			{
+				"id": "382227cb-5561-4dd7-88be-5a5c802250cb",
+				"method": "POST"
+			},
+			{
+				"id": "630f4499-e6cf-4d6b-b081-ed251ebaf170",
+				"method": "PATCH"
+			},
+			{
+				"id": "8dfc0793-0fe1-4d68-a1f7-60149817389e",
+				"method": "DELETE"
+			},
+			{
+				"id": "4e363d65-4908-4294-a4b5-f2f9cba8e1b7",
+				"method": "GET"
+			},
+			{
+				"id": "93bb246e-a86d-4727-82a3-48106ede0b34",
+				"method": "DELETE"
+			}
+		]
+	}
+}

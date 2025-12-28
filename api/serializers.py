@@ -23,52 +23,36 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'email', 'first_name', 'last_name']
 
 
-class UserProfileSerializer(serializers.ModelSerializer):
-    """
-    Serializer for UserProfile model with nested User fields.
+class _ProfileStringDefaultsMixin:
+    """Ensure specific fields are never null in responses (must be '' per doc)."""
 
-    Allows updating first_name and last_name on the related User model.
-    Provides flattened access to User fields for easier frontend consumption.
-    """
+    FIELDS_TO_FORCE_STRING = ['first_name', 'last_name', 'location', 'tel', 'description', 'working_hours']
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        for field in self.FIELDS_TO_FORCE_STRING:
+            if data.get(field) is None:
+                data[field] = ''
+        return data
+
+
+class ProfileDetailSerializer(_ProfileStringDefaultsMixin, serializers.ModelSerializer):
+    """Serializer for GET/PATCH /api/profile/{pk}/ (pk=user id)."""
 
     username = serializers.CharField(source='user.username', read_only=True)
     email = serializers.EmailField(source='user.email', required=False)
-    first_name = serializers.CharField(
-        source='user.first_name', required=False, allow_blank=True)
-    last_name = serializers.CharField(
-        source='user.last_name', required=False, allow_blank=True)
+    first_name = serializers.CharField(source='user.first_name', required=False, allow_blank=True)
+    last_name = serializers.CharField(source='user.last_name', required=False, allow_blank=True)
 
     class Meta:
         model = UserProfile
+        # Endpoint-Doku: exakt diese Felder
         fields = [
             'id', 'user', 'username', 'first_name', 'last_name', 'file',
-            'location', 'tel', 'description', 'working_hours', 'type',
-            'email', 'created_at'
+            'location', 'tel', 'description', 'working_hours',
+            'type', 'email', 'created_at'
         ]
-        read_only_fields = ['user', 'username', 'created_at']
-
-    def to_representation(self, instance):
-        """
-        Convert UserProfile to dictionary representation.
-        Ensures that first_name, last_name, location, tel, description, 
-        and working_hours are empty strings instead of null values.
-
-        Args:
-            instance (UserProfile): UserProfile instance
-
-        Returns:
-            dict: Serialized representation
-        """
-        data = super().to_representation(instance)
-
-        # Per API documentation: these fields must be empty strings, not null
-        fields_to_ensure_string = [
-            'first_name', 'last_name', 'location', 'tel', 'description', 'working_hours']
-        for field in fields_to_ensure_string:
-            if data.get(field) is None:
-                data[field] = ''
-
-        return data
+        read_only_fields = ['id', 'user', 'username', 'created_at']
 
     def update(self, instance, validated_data):
         """
@@ -97,6 +81,35 @@ class UserProfileSerializer(serializers.ModelSerializer):
         return instance
 
 
+class BusinessProfileListSerializer(_ProfileStringDefaultsMixin, serializers.ModelSerializer):
+    """Serializer for GET /api/profiles/business/ (array response)."""
+
+    username = serializers.CharField(source='user.username', read_only=True)
+    first_name = serializers.CharField(source='user.first_name', required=False, allow_blank=True)
+    last_name = serializers.CharField(source='user.last_name', required=False, allow_blank=True)
+
+    class Meta:
+        model = UserProfile
+        fields = [
+            'user', 'username', 'first_name', 'last_name', 'file',
+            'location', 'tel', 'description', 'working_hours', 'type'
+        ]
+        read_only_fields = fields
+
+
+class CustomerProfileListSerializer(_ProfileStringDefaultsMixin, serializers.ModelSerializer):
+    """Serializer for GET /api/profiles/customer/ (array response)."""
+
+    username = serializers.CharField(source='user.username', read_only=True)
+    first_name = serializers.CharField(source='user.first_name', required=False, allow_blank=True)
+    last_name = serializers.CharField(source='user.last_name', required=False, allow_blank=True)
+
+    class Meta:
+        model = UserProfile
+        fields = ['user', 'username', 'first_name', 'last_name', 'file', 'type']
+        read_only_fields = fields
+
+
 class OfferDetailSerializer(serializers.ModelSerializer):
     """
     Serializer for OfferDetail model.
@@ -112,122 +125,161 @@ class OfferDetailSerializer(serializers.ModelSerializer):
         ]
 
 
-class OfferSerializer(serializers.ModelSerializer):
-    """
-    Serializer for Offer model with nested OfferDetails.
+class OfferListDetailLinkSerializer(serializers.Serializer):
+    """Serializer for the nested 'details' links in GET /api/offers/ and GET /api/offers/{id}/."""
 
-    Includes creator information and computed minimum values
-    across all pricing tiers.
-    """
+    id = serializers.IntegerField()
+    url = serializers.CharField()
 
-    details = OfferDetailSerializer(many=True)
-    creator_name = serializers.CharField(
-        source='creator.username',
-        read_only=True
-    )
+
+class OfferListSerializer(serializers.ModelSerializer):
+    """Serializer for GET /api/offers/ (paginated, exact shape per doc)."""
+
     user = serializers.IntegerField(source='creator.id', read_only=True)
-    creator_details = serializers.SerializerMethodField()
-    min_delivery_time = serializers.SerializerMethodField()
+    details = serializers.SerializerMethodField()
     min_price = serializers.SerializerMethodField()
+    min_delivery_time = serializers.SerializerMethodField()
+    user_details = serializers.SerializerMethodField()
 
     class Meta:
         model = Offer
         fields = [
-            'id', 'creator', 'creator_name', 'user', 'creator_details',
-            'title', 'image', 'description', 'details',
-            'min_delivery_time', 'min_price',
-            'created_at', 'updated_at'
+            'id', 'user', 'title', 'image', 'description',
+            'created_at', 'updated_at',
+            'details',
+            'min_price', 'min_delivery_time',
+            'user_details',
         ]
-        read_only_fields = ['creator', 'created_at', 'updated_at']
 
-    def get_creator_details(self, obj):
-        """
-        Get detailed creator information.
-
-        Args:
-            obj (Offer): Offer instance
-
-        Returns:
-            dict: Creator profile details
-        """
-        profile = obj.creator.profile
-        return {
-            'first_name': obj.creator.first_name,
-            'last_name': obj.creator.last_name,
-            'username': obj.creator.username,
-            'type': profile.type,
-            'location': profile.location
-        }
-
-    def get_min_delivery_time(self, obj):
-        """
-        Calculate minimum delivery time across all tiers.
-
-        Args:
-            obj (Offer): Offer instance
-
-        Returns:
-            int or None: Minimum delivery time in days
-        """
-        if obj.details.exists():
-            return min(d.delivery_time_in_days for d in obj.details.all())
-        return None
+    def get_details(self, obj):
+        request = self.context.get('request')
+        items = []
+        for d in obj.details.all().order_by('id'):
+            # Doc examples sometimes omit '/api', but the canonical endpoint is /api/offerdetails/{id}/
+            url = f"/api/offerdetails/{d.id}/"
+            if request is not None:
+                # Provide an absolute URL to be safe for clients.
+                try:
+                    url = request.build_absolute_uri(url)
+                except Exception:
+                    pass
+            items.append({'id': d.id, 'url': url})
+        return items
 
     def get_min_price(self, obj):
-        """
-        Calculate minimum price across all tiers.
+        prices = list(obj.details.values_list('price', flat=True))
+        return min(prices) if prices else None
 
-        Args:
-            obj (Offer): Offer instance
+    def get_min_delivery_time(self, obj):
+        times = list(obj.details.values_list('delivery_time_in_days', flat=True))
+        return min(times) if times else None
 
-        Returns:
-            Decimal or None: Minimum price
-        """
-        if obj.details.exists():
-            return min(d.price for d in obj.details.all())
-        return None
+    def get_user_details(self, obj):
+        return {
+            'first_name': obj.creator.first_name or '',
+            'last_name': obj.creator.last_name or '',
+            'username': obj.creator.username,
+        }
+
+
+class OfferRetrieveSerializer(serializers.ModelSerializer):
+    """Serializer for GET /api/offers/{id}/ (exact shape per doc)."""
+
+    user = serializers.IntegerField(source='creator.id', read_only=True)
+    details = serializers.SerializerMethodField()
+    min_price = serializers.SerializerMethodField()
+    min_delivery_time = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Offer
+        fields = [
+            'id', 'user', 'title', 'image', 'description',
+            'created_at', 'updated_at',
+            'details',
+            'min_price', 'min_delivery_time',
+        ]
+
+    def get_details(self, obj):
+        request = self.context.get('request')
+        items = []
+        for d in obj.details.all().order_by('id'):
+            url = f"/api/offerdetails/{d.id}/"
+            if request is not None:
+                try:
+                    url = request.build_absolute_uri(url)
+                except Exception:
+                    pass
+            items.append({'id': d.id, 'url': url})
+        return items
+
+    def get_min_price(self, obj):
+        prices = list(obj.details.values_list('price', flat=True))
+        return min(prices) if prices else None
+
+    def get_min_delivery_time(self, obj):
+        times = list(obj.details.values_list('delivery_time_in_days', flat=True))
+        return min(times) if times else None
+
+
+class OfferWriteSerializer(serializers.ModelSerializer):
+    """Serializer for POST /api/offers/ and PATCH /api/offers/{id}/ (exact write+response per doc).
+
+    Response shape per doc includes: id, title, image, description, details (full objects with ids).
+    """
+
+    details = OfferDetailSerializer(many=True)
+
+    class Meta:
+        model = Offer
+        fields = ['id', 'title', 'image', 'description', 'details']
+
+    def validate_details(self, value):
+        # Doc: An offer MUST contain 3 details on creation.
+        request = self.context.get('request')
+        if request and request.method == 'POST':
+            if len(value) != 3:
+                raise serializers.ValidationError('An offer must have exactly 3 details.')
+            types = [d.get('offer_type') for d in value]
+            if sorted(types) != ['basic', 'premium', 'standard']:
+                raise serializers.ValidationError("Details must include offer_type: basic, standard, premium.")
+        # Always require offer_type for each provided detail (doc requirement for updates).
+        for d in value:
+            if not d.get('offer_type'):
+                raise serializers.ValidationError('Each detail must include offer_type.')
+        return value
 
     def create(self, validated_data):
-        """
-        Create Offer with nested OfferDetails.
-
-        Args:
-            validated_data (dict): Validated data from request
-
-        Returns:
-            Offer: Created Offer instance with details
-        """
-        details_data = validated_data.pop('details')
-        offer = Offer.objects.create(**validated_data)
+        details_data = validated_data.pop('details', [])
+        request = self.context.get('request')
+        creator = validated_data.pop('creator', None) or getattr(request, 'user', None)
+        offer = Offer.objects.create(creator=creator, **validated_data)
         for detail_data in details_data:
             OfferDetail.objects.create(offer=offer, **detail_data)
         return offer
 
     def update(self, instance, validated_data):
-        """
-        Update Offer and replace all OfferDetails.
-
-        Args:
-            instance (Offer): Offer instance to update
-            validated_data (dict): Validated data from request
-
-        Returns:
-            Offer: Updated Offer instance
-        """
+        # Patch: overwrite only provided fields; details update by offer_type while preserving IDs.
         details_data = validated_data.pop('details', None)
 
-        instance.title = validated_data.get('title', instance.title)
-        instance.description = validated_data.get(
-            'description',
-            instance.description
-        )
+        for attr in ['title', 'description', 'image']:
+            if attr in validated_data:
+                setattr(instance, attr, validated_data[attr])
         instance.save()
 
-        if details_data:
-            instance.details.all().delete()
-            for detail_data in details_data:
-                OfferDetail.objects.create(offer=instance, **detail_data)
-
+        if details_data is not None:
+            # Update each provided detail by offer_type.
+            for d in details_data:
+                offer_type = d.get('offer_type')
+                detail_obj, _created = OfferDetail.objects.get_or_create(
+                    offer=instance,
+                    offer_type=offer_type,
+                    defaults={'title': '', 'revisions': 0, 'delivery_time_in_days': 1, 'price': 0, 'features': []},
+                )
+                # Update fields
+                for field in ['title', 'revisions', 'delivery_time_in_days', 'price', 'features']:
+                    if field in d:
+                        setattr(detail_obj, field, d[field])
+                detail_obj.save()
         return instance
 
 
@@ -322,22 +374,24 @@ class ReviewSerializer(serializers.ModelSerializer):
         read_only_fields = ['reviewer', 'created_at', 'updated_at']
 
 
-class RegistrationSerializer(serializers.ModelSerializer):
+class RegistrationSerializer(serializers.Serializer):
     """
     Serializer for user registration.
 
     Creates both a Django User and associated UserProfile.
     """
 
+    username = serializers.CharField(max_length=150)
+    email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
+    repeated_password = serializers.CharField(write_only=True)
     type = serializers.ChoiceField(choices=['customer', 'business'])
 
-    class Meta:
-        model = User
-        fields = [
-            'username', 'email', 'password',
-            'first_name', 'last_name', 'type'
-        ]
+    def validate(self, attrs):
+        """Ensure password and repeated_password match."""
+        if attrs.get('password') != attrs.get('repeated_password'):
+            raise serializers.ValidationError({'repeated_password': 'Passwords do not match.'})
+        return attrs
 
     def create(self, validated_data):
         """
@@ -350,12 +404,13 @@ class RegistrationSerializer(serializers.ModelSerializer):
             User: Created User instance
         """
         user_type = validated_data.pop('type')
+        validated_data.pop('repeated_password', None)
         user = User.objects.create_user(
             username=validated_data['username'],
             email=validated_data.get('email', ''),
             password=validated_data['password'],
-            first_name=validated_data.get('first_name', ''),
-            last_name=validated_data.get('last_name', '')
+            first_name='',
+            last_name=''
         )
         UserProfile.objects.create(user=user, type=user_type)
         return user
