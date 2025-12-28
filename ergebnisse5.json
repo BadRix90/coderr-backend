@@ -1,7 +1,7 @@
 {
-	"id": "7975611e-c993-46b9-895f-5a47e07408f4",
+	"id": "668edca9-ecd6-4d30-89c8-3fdee121647e",
 	"name": "Coderr API - COMPLETE WITH TESTS",
-	"timestamp": "2025-12-28T13:10:57.742Z",
+	"timestamp": "2025-12-28T13:30:31.878Z",
 	"collection_id": "32391789-2d6bc872-958b-467f-bac7-dbdc224bce61",
 	"folder_id": 0,
 	"environment_id": "32391789-4a1202b3-e991-402c-b6b8-5dcf22c0bf6c",
@@ -9,14 +9,14 @@
 	"delay": 0,
 	"persist": true,
 	"status": "finished",
-	"startedAt": "2025-12-28T13:10:53.696Z",
+	"startedAt": "2025-12-28T13:30:27.886Z",
 	"totalFail": 0,
 	"results": [
 		{
 			"id": "de9cfc1d-62ef-4812-a097-281f8a82232e",
 			"name": "Registration - Customer",
 			"url": "http://127.0.0.1:8000/api/registration/",
-			"time": 516,
+			"time": 491,
 			"responseCode": {
 				"code": 201,
 				"name": "Created"
@@ -36,7 +36,7 @@
 				}
 			},
 			"times": [
-				516
+				491
 			],
 			"allTests": [
 				{
@@ -49,7 +49,7 @@
 			"id": "4a1f7c5b-ee67-4e0e-89dc-abb9fcb3fc2f",
 			"name": "Registration - Business",
 			"url": "http://127.0.0.1:8000/api/registration/",
-			"time": 529,
+			"time": 545,
 			"responseCode": {
 				"code": 201,
 				"name": "Created"
@@ -69,7 +69,7 @@
 				}
 			},
 			"times": [
-				529
+				545
 			],
 			"allTests": [
 				{
@@ -82,7 +82,7 @@
 			"id": "2fdb5c4c-bbd2-4daa-8131-4de808bf8aa4",
 			"name": "Login",
 			"url": "http://127.0.0.1:8000/api/login/",
-			"time": 474,
+			"time": 446,
 			"responseCode": {
 				"code": 200,
 				"name": "OK"
@@ -102,7 +102,7 @@
 				}
 			},
 			"times": [
-				474
+				446
 			],
 			"allTests": [
 				{
@@ -114,8 +114,8 @@
 		{
 			"id": "f4f40a83-8f42-4a7d-b55f-9138dfe007fc",
 			"name": "Get Profile by ID",
-			"url": "http://127.0.0.1:8000/api/profile/10/",
-			"time": 4,
+			"url": "http://127.0.0.1:8000/api/profile/12/",
+			"time": 6,
 			"responseCode": {
 				"code": 200,
 				"name": "OK"
@@ -135,7 +135,7 @@
 				}
 			},
 			"times": [
-				4
+				6
 			],
 			"allTests": [
 				{
@@ -147,8 +147,8 @@
 		{
 			"id": "6176f400-5eaa-4a34-abb6-c3a0b56ee7d7",
 			"name": "Update Profile",
-			"url": "http://127.0.0.1:8000/api/profile/10/",
-			"time": 15,
+			"url": "http://127.0.0.1:8000/api/profile/12/",
+			"time": 13,
 			"responseCode": {
 				"code": 200,
 				"name": "OK"
@@ -168,7 +168,7 @@
 				}
 			},
 			"times": [
-				15
+				13
 			],
 			"allTests": [
 				{
@@ -247,7 +247,7 @@
 			"id": "6d921199-f026-4196-8386-b15ae73ae901",
 			"name": "Get All Offers (Paginated)",
 			"url": "http://127.0.0.1:8000/api/offers/?page=1",
-			"time": 4,
+			"time": 7,
 			"responseCode": {
 				"code": 200,
 				"name": "OK"
@@ -267,7 +267,7 @@
 				}
 			},
 			"times": [
-				4
+				7
 			],
 			"allTests": [
 				{
@@ -280,7 +280,7 @@
 			"id": "a6d761e5-9143-420e-b034-fbc908ead3d3",
 			"name": "Create Offer",
 			"url": "http://127.0.0.1:8000/api/offers/",
-			"time": 37,
+			"time": 40,
 			"responseCode": {
 				"code": 201,
 				"name": "Created"
@@ -300,7 +300,7 @@
 				}
 			},
 			"times": [
-				37
+				40
 			],
 			"allTests": [
 				{
@@ -312,8 +312,8 @@
 		{
 			"id": "fd68a021-60de-4e31-9adf-3e700a08cca2",
 			"name": "Get Offer by ID",
-			"url": "http://127.0.0.1:8000/api/offers/9/",
-			"time": 6,
+			"url": "http://127.0.0.1:8000/api/offers/12/",
+			"time": 11,
 			"responseCode": {
 				"code": 200,
 				"name": "OK"
@@ -333,7 +333,7 @@
 				}
 			},
 			"times": [
-				6
+				11
 			],
 			"allTests": [
 				{
@@ -345,7 +345,7 @@
 		{
 			"id": "0d12089f-2998-4129-8860-bb6615eeae13",
 			"name": "Update Offer",
-			"url": "http://127.0.0.1:8000/api/offers/9/",
+			"url": "http://127.0.0.1:8000/api/offers/12/",
 			"time": 15,
 			"responseCode": {
 				"code": 200,
@@ -378,8 +378,8 @@
 		{
 			"id": "e5a5708f-6cde-4b17-a65b-acd9118b5506",
 			"name": "Get Offer Detail by ID",
-			"url": "http://127.0.0.1:8000/api/offerdetails/25/",
-			"time": 6,
+			"url": "http://127.0.0.1:8000/api/offerdetails/34/",
+			"time": 5,
 			"responseCode": {
 				"code": 200,
 				"name": "OK"
@@ -399,7 +399,7 @@
 				}
 			},
 			"times": [
-				6
+				5
 			],
 			"allTests": [
 				{
@@ -477,8 +477,8 @@
 		{
 			"id": "22bc6026-3830-49f3-8342-420292250f5d",
 			"name": "Update Order Status",
-			"url": "http://127.0.0.1:8000/api/orders/9/",
-			"time": 17,
+			"url": "http://127.0.0.1:8000/api/orders/12/",
+			"time": 22,
 			"responseCode": {
 				"code": 200,
 				"name": "OK"
@@ -498,7 +498,7 @@
 				}
 			},
 			"times": [
-				17
+				22
 			],
 			"allTests": [
 				{
@@ -510,8 +510,8 @@
 		{
 			"id": "d2030b16-bb0a-4636-979f-8e87a7fdce98",
 			"name": "Delete Order (Admin only)",
-			"url": "http://127.0.0.1:8000/api/orders/9/",
-			"time": 20,
+			"url": "http://127.0.0.1:8000/api/orders/12/",
+			"time": 12,
 			"responseCode": {
 				"code": 204,
 				"name": "No Content"
@@ -526,7 +526,7 @@
 				}
 			},
 			"times": [
-				20
+				12
 			],
 			"allTests": [
 				{
@@ -537,7 +537,40 @@
 		{
 			"id": "6641aebe-9cb8-4924-ab46-0fe468b8ef87",
 			"name": "Get Order Count (In Progress)",
-			"url": "http://127.0.0.1:8000/api/order-count/10/",
+			"url": "http://127.0.0.1:8000/api/order-count/12/",
+			"time": 6,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Response has order_count": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response has order_count": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				6
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Response has order_count": true
+				}
+			]
+		},
+		{
+			"id": "2ad6ba9f-89b8-4417-bcd0-7c9861dbfcd8",
+			"name": "Get Completed Order Count",
+			"url": "http://127.0.0.1:8000/api/completed-order-count/12/",
 			"time": 5,
 			"responseCode": {
 				"code": 200,
@@ -568,43 +601,10 @@
 			]
 		},
 		{
-			"id": "2ad6ba9f-89b8-4417-bcd0-7c9861dbfcd8",
-			"name": "Get Completed Order Count",
-			"url": "http://127.0.0.1:8000/api/completed-order-count/10/",
-			"time": 4,
-			"responseCode": {
-				"code": 200,
-				"name": "OK"
-			},
-			"tests": {
-				"Status code is 200": true,
-				"Response has order_count": true
-			},
-			"testPassFailCounts": {
-				"Status code is 200": {
-					"pass": 1,
-					"fail": 0
-				},
-				"Response has order_count": {
-					"pass": 1,
-					"fail": 0
-				}
-			},
-			"times": [
-				4
-			],
-			"allTests": [
-				{
-					"Status code is 200": true,
-					"Response has order_count": true
-				}
-			]
-		},
-		{
 			"id": "48102ca6-83b9-491e-8d15-0929c81017d3",
 			"name": "Get All Reviews",
 			"url": "http://127.0.0.1:8000/api/reviews/",
-			"time": 4,
+			"time": 6,
 			"responseCode": {
 				"code": 200,
 				"name": "OK"
@@ -624,7 +624,7 @@
 				}
 			},
 			"times": [
-				4
+				6
 			],
 			"allTests": [
 				{
@@ -637,7 +637,7 @@
 			"id": "382227cb-5561-4dd7-88be-5a5c802250cb",
 			"name": "Create Review",
 			"url": "http://127.0.0.1:8000/api/reviews/",
-			"time": 13,
+			"time": 14,
 			"responseCode": {
 				"code": 201,
 				"name": "Created"
@@ -657,7 +657,7 @@
 				}
 			},
 			"times": [
-				13
+				14
 			],
 			"allTests": [
 				{
@@ -669,8 +669,8 @@
 		{
 			"id": "630f4499-e6cf-4d6b-b081-ed251ebaf170",
 			"name": "Update Review",
-			"url": "http://127.0.0.1:8000/api/reviews/8/",
-			"time": 13,
+			"url": "http://127.0.0.1:8000/api/reviews/11/",
+			"time": 21,
 			"responseCode": {
 				"code": 200,
 				"name": "OK"
@@ -690,7 +690,7 @@
 				}
 			},
 			"times": [
-				13
+				21
 			],
 			"allTests": [
 				{
@@ -702,7 +702,7 @@
 		{
 			"id": "8dfc0793-0fe1-4d68-a1f7-60149817389e",
 			"name": "Delete Review",
-			"url": "http://127.0.0.1:8000/api/reviews/8/",
+			"url": "http://127.0.0.1:8000/api/reviews/11/",
 			"time": 13,
 			"responseCode": {
 				"code": 204,
@@ -730,7 +730,7 @@
 			"id": "4e363d65-4908-4294-a4b5-f2f9cba8e1b7",
 			"name": "Get Base Info",
 			"url": "http://127.0.0.1:8000/api/base-info/",
-			"time": 4,
+			"time": 5,
 			"responseCode": {
 				"code": 200,
 				"name": "OK"
@@ -750,7 +750,7 @@
 				}
 			},
 			"times": [
-				4
+				5
 			],
 			"allTests": [
 				{
@@ -762,8 +762,8 @@
 		{
 			"id": "93bb246e-a86d-4727-82a3-48106ede0b34",
 			"name": "Delete Offer (Cleanup)",
-			"url": "http://127.0.0.1:8000/api/offers/9/",
-			"time": 14,
+			"url": "http://127.0.0.1:8000/api/offers/12/",
+			"time": 13,
 			"responseCode": {
 				"code": 204,
 				"name": "No Content"
@@ -778,7 +778,7 @@
 				}
 			},
 			"times": [
-				14
+				13
 			],
 			"allTests": [
 				{
@@ -788,7 +788,7 @@
 		}
 	],
 	"count": 1,
-	"totalTime": 1740,
+	"totalTime": 1723,
 	"collection": {
 		"requests": [
 			{
