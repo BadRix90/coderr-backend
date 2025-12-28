@@ -40,12 +40,12 @@ class UserProfile(models.Model):
     )
     type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES)
     file = models.ImageField(upload_to='profiles/', null=True, blank=True)
-    location = models.CharField(max_length=100, blank=True)
-    description = models.TextField(blank=True)
-    working_hours = models.CharField(max_length=50, blank=True)
+    location = models.CharField(max_length=100, blank=True, default='')
+    description = models.TextField(blank=True, default='')
+    working_hours = models.CharField(max_length=50, blank=True, default='')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    tel = models.CharField(max_length=20, blank=True)
+    tel = models.CharField(max_length=20, blank=True, default='')
 
     def __str__(self):
         """Return string representation of UserProfile."""

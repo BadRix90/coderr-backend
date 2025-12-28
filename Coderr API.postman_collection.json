@@ -1,245 +1,965 @@
 {
 	"info": {
-		"_postman_id": "d4be85d1-e3d1-45c0-a895-fb2667b6b3ea",
-		"name": "Coderr API",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
-		"_exporter_id": "32391789"
+		"name": "Coderr API - COMPLETE WITH TESTS",
+		"description": "Vollständige API-Tests mit automatischer ID-Verwaltung",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "Login - andrey",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"username\": \"andrey\",\r\n    \"password\": \"asdasd\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Registration - Customer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 201', function() {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('customer_id', response.user_id);",
+									"    pm.test('Response has user_id', function() {",
+									"        pm.expect(response).to.have.property('user_id');",
+									"    });",
+									"    console.log('✅ Customer ID saved:', response.user_id);",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"testcustomer\",\n    \"email\": \"customer@test.de\",\n    \"password\": \"test1234\",\n    \"first_name\": \"Test\",\n    \"last_name\": \"Customer\",\n    \"type\": \"customer\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/registration/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "registration", ""]
 						}
 					}
 				},
-				"url": "{{base_url}}/login/"
-			},
-			"response": []
-		},
-		{
-			"name": "Get Profile - andrey",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Token 8ad38bea10b66648b5cd2b4be512384558578714",
-						"type": "text"
-					}
-				],
-				"url": "{{base_url}}/profile/2/"
-			},
-			"response": []
-		},
-		{
-			"name": "Login - kevin",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"username\": \"kevin\",\r\n    \"password\": \"asdasd24\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "Registration - Business",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 201', function() {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('business_id', response.user_id);",
+									"    pm.test('Response has user_id', function() {",
+									"        pm.expect(response).to.have.property('user_id');",
+									"    });",
+									"    console.log('✅ Business ID saved:', response.user_id);",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"testbusiness\",\n    \"email\": \"business@test.de\",\n    \"password\": \"test1234\",\n    \"first_name\": \"Test\",\n    \"last_name\": \"Business\",\n    \"type\": \"business\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/registration/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "registration", ""]
 						}
 					}
 				},
-				"url": "{{base_url}}/login/"
-			},
-			"response": []
-		},
-		{
-			"name": "Get Profile - kevin",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Token 16f78502f48cb55f238f03def930682028543c54",
-						"type": "text"
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('token', response.token);",
+									"    pm.environment.set('user_id', response.user_id);",
+									"    pm.test('Response has token', function() {",
+									"        pm.expect(response).to.have.property('token');",
+									"    });",
+									"    console.log('✅ Token saved:', response.token);",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"testbusiness\",\n    \"password\": \"test1234\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/login/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "login", ""]
+						}
 					}
-				],
-				"url": "{{base_url}}/profile/2/"
-			},
-			"response": []
+				}
+			]
 		},
 		{
-			"name": "Registration - new customer",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"username\": \"testuser\",\r\n    \"email\": \"test@test.de\",\r\n    \"password\": \"test1234\",\r\n    \"first_name\": \"Test\",\r\n    \"last_name\": \"User\",\r\n    \"type\": \"customer\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "Profile",
+			"item": [
+				{
+					"name": "Get Profile by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has profile data', function() {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('id');",
+									"    pm.expect(response).to.have.property('type');",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/profile/{{user_id}}/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "profile", "{{user_id}}", ""]
 						}
 					}
 				},
-				"url": "{{base_url}}/registration/"
-			},
-			"response": []
-		},
-		{
-			"name": "Create Offer",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Token 16f78502f48cb55f238f03def930682028543c54",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"title\": \"Website Development\",\r\n    \"description\": \"Professional website development service\",\r\n    \"details\": [\r\n        {\r\n            \"title\": \"Basic Package\",\r\n            \"revisions\": 2,\r\n            \"delivery_time_in_days\": 7,\r\n            \"price\": 299.99,\r\n            \"features\": [\"Responsive Design\", \"5 Pages\", \"Contact Form\"],\r\n            \"offer_type\": \"basic\"\r\n        },\r\n        {\r\n            \"title\": \"Standard Package\",\r\n            \"revisions\": 5,\r\n            \"delivery_time_in_days\": 14,\r\n            \"price\": 599.99,\r\n            \"features\": [\"Responsive Design\", \"10 Pages\", \"Contact Form\", \"SEO\"],\r\n            \"offer_type\": \"standard\"\r\n        },\r\n        {\r\n            \"title\": \"Premium Package\",\r\n            \"revisions\": -1,\r\n            \"delivery_time_in_days\": 21,\r\n            \"price\": 999.99,\r\n            \"features\": [\"Responsive Design\", \"Unlimited Pages\", \"Contact Form\", \"SEO\", \"CMS\"],\r\n            \"offer_type\": \"premium\"\r\n        }\r\n    ]\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "Update Profile",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Description was updated', function() {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response.description).to.include('Professional');",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"description\": \"Professional developer with 5 years experience\",\n    \"location\": \"Berlin, Germany\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/profile/{{user_id}}/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "profile", "{{user_id}}", ""]
 						}
 					}
 				},
-				"url": "{{base_url}}/offers/"
-			},
-			"response": []
-		},
-		{
-			"name": "Get All Offers",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Token 16f78502f48cb55f238f03def930682028543c54",
-						"type": "text"
-					}
-				],
-				"url": "{{base_url}}/offers/"
-			},
-			"response": []
-		},
-		{
-			"name": "Create Order",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Token 8ad38bea10b66648b5cd2b4be51230455057071d",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"offer_detail\": 1,\r\n    \"status\": \"in_progress\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "Get Business Profiles",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Returns array of profiles', function() {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.be.an('array');",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/profiles/business/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "profiles", "business", ""]
 						}
 					}
 				},
-				"url": "{{base_url}}/orders/"
-			},
-			"response": []
+				{
+					"name": "Get Customer Profiles",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Returns array of profiles', function() {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.be.an('array');",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/profiles/customer/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "profiles", "customer", ""]
+						}
+					}
+				}
+			]
 		},
 		{
-			"name": "Create Review",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Token 8ad38bea10b66648b5cd2b4be51230455057071d",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"business_user\": 3,\r\n    \"rating\": 5,\r\n    \"description\": \"Excellent work! Very professional and fast delivery.\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "Offers",
+			"item": [
+				{
+					"name": "Get All Offers (Paginated)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has pagination', function() {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('results');",
+									"    pm.expect(response).to.have.property('count');",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/offers/?page=1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "offers", ""],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
 						}
 					}
 				},
-				"url": "{{base_url}}/reviews/"
-			},
-			"response": []
-		},
-		{
-			"name": "Get Base Info",
-			"request": {
-				"method": "GET",
-				"header": []
-			},
-			"response": []
-		},
-		{
-			"name": "Get Order Count - kevin",
-			"request": {
-				"method": "GET",
-				"header": []
-			},
-			"response": []
-		},
-		{
-			"name": "Get Reviews - kevin",
-			"request": {
-				"method": "GET",
-				"header": []
-			},
-			"response": []
-		},
-		{
-			"name": "Get Offer Detail",
-			"request": {
-				"method": "GET",
-				"header": []
-			},
-			"response": []
-		},
-		{
-			"name": "Get Reviews List",
-			"request": {
-				"method": "GET",
-				"header": []
-			},
-			"response": []
-		},
-		{
-			"name": "Update Profile - kevin",
-			"request": {
-				"method": "PATCH",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Token 16f78502f48cb55f238f03def930682028543c54",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"first_name\": \"Kevin\",\r\n    \"last_name\": \"Weber\",\r\n    \"description\": \"Full-Stack Developer\",\r\n    \"location\": \"Berlin\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "Create Offer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 201', function() {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('offer_id', response.id);",
+									"    ",
+									"    if (response.details && response.details.length > 0) {",
+									"        pm.environment.set('offer_detail_id', response.details[0].id);",
+									"        console.log('✅ Offer Detail ID saved:', response.details[0].id);",
+									"    }",
+									"    ",
+									"    pm.test('Offer has details', function() {",
+									"        pm.expect(response.details).to.be.an('array');",
+									"        pm.expect(response.details.length).to.be.above(0);",
+									"    });",
+									"    ",
+									"    console.log('✅ Offer ID saved:', response.id);",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Website Development\",\n    \"description\": \"Professional website development service\",\n    \"details\": [\n        {\n            \"title\": \"Basic Package\",\n            \"revisions\": 2,\n            \"delivery_time_in_days\": 7,\n            \"price\": \"299.99\",\n            \"features\": [\"Responsive Design\", \"5 Pages\", \"Contact Form\"],\n            \"offer_type\": \"basic\"\n        },\n        {\n            \"title\": \"Standard Package\",\n            \"revisions\": 5,\n            \"delivery_time_in_days\": 14,\n            \"price\": \"599.99\",\n            \"features\": [\"Responsive Design\", \"10 Pages\", \"SEO\"],\n            \"offer_type\": \"standard\"\n        },\n        {\n            \"title\": \"Premium Package\",\n            \"revisions\": -1,\n            \"delivery_time_in_days\": 21,\n            \"price\": \"999.99\",\n            \"features\": [\"Responsive Design\", \"Unlimited Pages\", \"CMS\"],\n            \"offer_type\": \"premium\"\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/offers/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "offers", ""]
 						}
 					}
 				},
-				"url": "{{base_url}}/profile/2/"
-			},
-			"response": []
+				{
+					"name": "Get Offer by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Offer has correct structure', function() {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('id');",
+									"    pm.expect(response).to.have.property('title');",
+									"    pm.expect(response).to.have.property('details');",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/offers/{{offer_id}}/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "offers", "{{offer_id}}", ""]
+						}
+					}
+				},
+				{
+					"name": "Update Offer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Title was updated', function() {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response.title).to.include('Updated');",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Updated Website Development\",\n    \"description\": \"Updated professional website development service\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/offers/{{offer_id}}/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "offers", "{{offer_id}}", ""]
+						}
+					}
+				},
+				{
+					"name": "Get Offer Detail by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Offer detail has correct structure', function() {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('id');",
+									"    pm.expect(response).to.have.property('price');",
+									"    pm.expect(response).to.have.property('offer_type');",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/offerdetails/{{offer_detail_id}}/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "offerdetails", "{{offer_detail_id}}", ""]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Orders",
+			"item": [
+				{
+					"name": "Get My Orders",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has pagination', function() {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('results');",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/orders/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "orders", ""]
+						}
+					}
+				},
+				{
+					"name": "Create Order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 201', function() {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('order_id', response.id);",
+									"    ",
+									"    pm.test('Order created successfully', function() {",
+									"        pm.expect(response).to.have.property('id');",
+									"        pm.expect(response).to.have.property('status');",
+									"    });",
+									"    ",
+									"    console.log('✅ Order ID saved:', response.id);",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"offer_detail_id\": {{offer_detail_id}}\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/orders/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "orders", ""]
+						}
+					}
+				},
+				{
+					"name": "Update Order Status",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Order status was updated', function() {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response.status).to.equal('completed');",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"completed\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/orders/{{order_id}}/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "orders", "{{order_id}}", ""]
+						}
+					}
+				},
+				{
+					"name": "Delete Order (Admin only)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 204 or 403', function() {",
+									"    pm.expect([204, 403]).to.include(pm.response.code);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/orders/{{order_id}}/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "orders", "{{order_id}}", ""]
+						}
+					}
+				},
+				{
+					"name": "Get Order Count (In Progress)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has order_count', function() {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('order_count');",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/order-count/{{user_id}}/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "order-count", "{{user_id}}", ""]
+						}
+					}
+				},
+				{
+					"name": "Get Completed Order Count",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has order_count', function() {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('order_count');",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/completed-order-count/{{user_id}}/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "completed-order-count", "{{user_id}}", ""]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Reviews",
+			"item": [
+				{
+					"name": "Get All Reviews",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has pagination', function() {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('results');",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/reviews/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "reviews", ""]
+						}
+					}
+				},
+				{
+					"name": "Create Review",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 201', function() {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('review_id', response.id);",
+									"    ",
+									"    pm.test('Review created successfully', function() {",
+									"        pm.expect(response).to.have.property('id');",
+									"        pm.expect(response).to.have.property('rating');",
+									"        pm.expect(response.rating).to.equal(5);",
+									"    });",
+									"    ",
+									"    console.log('✅ Review ID saved:', response.id);",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"business_user\": {{business_id}},\n    \"rating\": 5,\n    \"description\": \"Excellent work! Very professional and fast delivery.\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/reviews/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "reviews", ""]
+						}
+					}
+				},
+				{
+					"name": "Update Review",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Review was updated', function() {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response.rating).to.equal(4);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rating\": 4,\n    \"description\": \"Good work, but could be faster.\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/reviews/{{review_id}}/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "reviews", "{{review_id}}", ""]
+						}
+					}
+				},
+				{
+					"name": "Delete Review",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 204', function() {",
+									"    pm.response.to.have.status(204);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/reviews/{{review_id}}/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "reviews", "{{review_id}}", ""]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Platform Stats",
+			"item": [
+				{
+					"name": "Get Base Info",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has correct structure', function() {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('review_count');",
+									"    pm.expect(response).to.have.property('average_rating');",
+									"    pm.expect(response).to.have.property('business_profile_count');",
+									"    pm.expect(response).to.have.property('offer_count');",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/base-info/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "base-info", ""]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Cleanup",
+			"item": [
+				{
+					"name": "Delete Offer (Cleanup)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 204', function() {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"console.log('✅ Cleanup: Offer deleted');"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/offers/{{offer_id}}/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "offers", "{{offer_id}}", ""]
+						}
+					}
+				}
+			]
 		}
 	]
 }

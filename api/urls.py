@@ -20,6 +20,6 @@ urlpatterns = [
     path('completed-order-count/<int:profile_id>/', completed_order_count_view, name='completed-order-count'),
     path('base-info/', base_info_view, name='base-info'),
     path('profiles/business/', UserProfileViewSet.as_view({'get': 'business_profiles'}), name='business-profiles'),
-    path('profiles/customer/', UserProfileViewSet.as_view({'get': 'customer_profiles'}), name='customer-profiles'),
+    path('profiles/customer/', UserProfileViewSet.as_view({'get': 'customer_profile'}), name='customer-profiles'),
     path('', include(router.urls)),
 ]
