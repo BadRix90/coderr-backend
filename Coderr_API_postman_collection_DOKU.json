@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "Coderr API - COMPLETE WITH TESTS",
-    "description": "Vollst\u00e4ndige API-Tests mit automatischer ID-Verwaltung",
+    "description": "Vollständige API-Tests mit automatischer ID-Verwaltung",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -21,11 +21,12 @@
                   "",
                   "if (pm.response.code === 201) {",
                   "    const response = pm.response.json();",
+                  "    pm.environment.set('customer_token', response.token);",
                   "    pm.environment.set('customer_id', response.user_id);",
                   "    pm.test('Response has user_id', function() {",
                   "        pm.expect(response).to.have.property('user_id');",
                   "    });",
-                  "    console.log('\u2705 Customer ID saved:', response.user_id);",
+                  "    console.log('✅ Customer ID saved:', response.user_id);",
                   "}"
                 ]
               }
@@ -69,11 +70,12 @@
                   "",
                   "if (pm.response.code === 201) {",
                   "    const response = pm.response.json();",
+                  "    pm.environment.set('business_token', response.token);",
                   "    pm.environment.set('business_id', response.user_id);",
                   "    pm.test('Response has user_id', function() {",
                   "        pm.expect(response).to.have.property('user_id');",
                   "    });",
-                  "    console.log('\u2705 Business ID saved:', response.user_id);",
+                  "    console.log('✅ Business ID saved:', response.user_id);",
                   "}"
                 ]
               }
@@ -117,12 +119,13 @@
                   "",
                   "if (pm.response.code === 200) {",
                   "    const response = pm.response.json();",
+                  "    pm.environment.set('business_token', response.token);",
                   "    pm.environment.set('token', response.token);",
                   "    pm.environment.set('user_id', response.user_id);",
                   "    pm.test('Response has token', function() {",
                   "        pm.expect(response).to.have.property('token');",
                   "    });",
-                  "    console.log('\u2705 Token saved:', response.token);",
+                  "    console.log('✅ Token saved:', response.token);",
                   "}"
                 ]
               }
@@ -169,10 +172,14 @@
                   "    pm.response.to.have.status(200);",
                   "});",
                   "",
-                  "pm.test('Response has profile data', function() {",
+                  "pm.test('Response matches profile schema (no id field)', function() {",
                   "    const response = pm.response.json();",
-                  "    pm.expect(response).to.have.property('id');",
+                  "    pm.expect(response).to.be.an('object');",
+                  "    pm.expect(response).to.have.property('user');",
+                  "    pm.expect(response).to.have.property('username');",
                   "    pm.expect(response).to.have.property('type');",
+                  "    pm.expect(response).to.have.property('created_at');",
+                  "    pm.expect(response).to.not.have.property('id');",
                   "});"
                 ]
               }
@@ -400,7 +407,7 @@
                   "    ",
                   "    if (response.details && response.details.length > 0) {",
                   "        pm.environment.set('offer_detail_id', response.details[0].id);",
-                  "        console.log('\u2705 Offer Detail ID saved:', response.details[0].id);",
+                  "        console.log('✅ Offer Detail ID saved:', response.details[0].id);",
                   "    }",
                   "    ",
                   "    pm.test('Offer has details', function() {",
@@ -408,7 +415,7 @@
                   "        pm.expect(response.details.length).to.be.above(0);",
                   "    });",
                   "    ",
-                  "    console.log('\u2705 Offer ID saved:', response.id);",
+                  "    console.log('✅ Offer ID saved:', response.id);",
                   "}"
                 ]
               }
@@ -594,9 +601,20 @@
                   "    pm.response.to.have.status(200);",
                   "});",
                   "",
-                  "pm.test('Response has pagination', function() {",
+                  "pm.test('Response is an array (no pagination)', function() {",
                   "    const response = pm.response.json();",
-                  "    pm.expect(response).to.have.property('results');",
+                  "    pm.expect(response).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test('Array items have order fields', function() {",
+                  "    const response = pm.response.json();",
+                  "    if (Array.isArray(response) && response.length > 0) {",
+                  "        const item = response[0];",
+                  "        pm.expect(item).to.have.property('id');",
+                  "        pm.expect(item).to.have.property('status');",
+                  "        pm.expect(item).to.have.property('created_at');",
+                  "        pm.expect(item).to.have.property('updated_at');",
+                  "    }",
                   "});"
                 ]
               }
@@ -643,7 +661,7 @@
                   "        pm.expect(response).to.have.property('status');",
                   "    });",
                   "    ",
-                  "    console.log('\u2705 Order ID saved:', response.id);",
+                  "    console.log('✅ Order ID saved:', response.id);",
                   "}"
                 ]
               }
@@ -654,7 +672,7 @@
             "header": [
               {
                 "key": "Authorization",
-                "value": "Token {{token}}"
+                "value": "Token {{customer_token}}"
               },
               {
                 "key": "Content-Type",
@@ -702,7 +720,7 @@
             "header": [
               {
                 "key": "Authorization",
-                "value": "Token {{token}}"
+                "value": "Token {{business_token}}"
               },
               {
                 "key": "Content-Type",
@@ -746,7 +764,7 @@
             "header": [
               {
                 "key": "Authorization",
-                "value": "Token {{token}}"
+                "value": "Token {{business_token}}"
               }
             ],
             "url": {
@@ -861,9 +879,23 @@
                   "    pm.response.to.have.status(200);",
                   "});",
                   "",
-                  "pm.test('Response has pagination', function() {",
+                  "pm.test('Response is an array (no pagination)', function() {",
                   "    const response = pm.response.json();",
-                  "    pm.expect(response).to.have.property('results');",
+                  "    pm.expect(response).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test('Array items have review fields', function() {",
+                  "    const response = pm.response.json();",
+                  "    if (Array.isArray(response) && response.length > 0) {",
+                  "        const item = response[0];",
+                  "        pm.expect(item).to.have.property('id');",
+                  "        pm.expect(item).to.have.property('business_user');",
+                  "        pm.expect(item).to.have.property('reviewer');",
+                  "        pm.expect(item).to.have.property('rating');",
+                  "        pm.expect(item).to.have.property('description');",
+                  "        pm.expect(item).to.have.property('created_at');",
+                  "        pm.expect(item).to.have.property('updated_at');",
+                  "    }",
                   "});"
                 ]
               }
@@ -911,7 +943,7 @@
                   "        pm.expect(response.rating).to.equal(5);",
                   "    });",
                   "    ",
-                  "    console.log('\u2705 Review ID saved:', response.id);",
+                  "    console.log('✅ Review ID saved:', response.id);",
                   "}"
                 ]
               }
@@ -922,7 +954,7 @@
             "header": [
               {
                 "key": "Authorization",
-                "value": "Token {{token}}"
+                "value": "Token {{customer_token}}"
               },
               {
                 "key": "Content-Type",
@@ -970,7 +1002,7 @@
             "header": [
               {
                 "key": "Authorization",
-                "value": "Token {{token}}"
+                "value": "Token {{customer_token}}"
               },
               {
                 "key": "Content-Type",
@@ -1014,7 +1046,7 @@
             "header": [
               {
                 "key": "Authorization",
-                "value": "Token {{token}}"
+                "value": "Token {{customer_token}}"
               }
             ],
             "url": {
@@ -1090,7 +1122,7 @@
                   "    pm.response.to.have.status(204);",
                   "});",
                   "",
-                  "console.log('\u2705 Cleanup: Offer deleted');"
+                  "console.log('✅ Cleanup: Offer deleted');"
                 ]
               }
             }

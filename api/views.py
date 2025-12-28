@@ -7,15 +7,15 @@ for the REST API endpoints.
 
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from django.db.models import Min, Q
 from rest_framework import filters, status, viewsets
+from rest_framework.authtoken.models import Token
 from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.exceptions import PermissionDenied, ValidationError
+from rest_framework.generics import RetrieveUpdateAPIView
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.authtoken.models import Token
-from django.db.models import Min, Q
-from rest_framework.pagination import PageNumberPagination
-from rest_framework.generics import RetrieveUpdateAPIView
-from rest_framework.exceptions import PermissionDenied
 
 from .models import Offer, OfferDetail, Order, Review, UserProfile
 from .serializers import (
@@ -37,12 +37,6 @@ from .serializers import (
 def login_view(request):
     """
     Authenticate user and return auth token.
-
-    Args:
-        request: POST request with username and password
-
-    Returns:
-        Response: Token and user info or error message
     """
     username = request.data.get('username')
     password = request.data.get('password')
@@ -52,7 +46,6 @@ def login_view(request):
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
     token, _ = Token.objects.get_or_create(user=user)
-    # Doku: exakt diese Felder
     return Response({
         'token': token.key,
         'username': user.username,
@@ -66,12 +59,6 @@ def login_view(request):
 def registration_view(request):
     """
     Register new user with profile.
-
-    Args:
-        request: POST request with registration data
-
-    Returns:
-        Response: Token and user info or validation errors
     """
     serializer = RegistrationSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
@@ -79,7 +66,6 @@ def registration_view(request):
     user = serializer.save()
     token = Token.objects.create(user=user)
 
-    # Doku: exakt diese Felder
     return Response({
         'token': token.key,
         'username': user.username,
@@ -99,11 +85,8 @@ class ProfileDetailView(RetrieveUpdateAPIView):
         try:
             profile = UserProfile.objects.select_related('user').get(user_id=user_id)
         except UserProfile.DoesNotExist:
-            # Doku: 404 wenn Profil nicht gefunden
             from rest_framework.exceptions import NotFound
-
             raise NotFound('UserProfile not found')
-
         return profile
 
     def patch(self, request, *args, **kwargs):
@@ -116,9 +99,6 @@ class ProfileDetailView(RetrieveUpdateAPIView):
 class UserProfileViewSet(viewsets.ModelViewSet):
     """
     ViewSet for UserProfile CRUD operations.
-
-    Provides endpoints for viewing and editing user profiles,
-    plus custom actions for filtering by user type.
     """
 
     queryset = UserProfile.objects.all()
@@ -127,24 +107,12 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'], url_path='business')
     def business_profiles(self, request):
-        """
-        List all business user profiles.
-
-        Returns:
-            Response: List of business profiles
-        """
         profiles = UserProfile.objects.filter(type='business')
         serializer = BusinessProfileListSerializer(profiles, many=True)
         return Response(serializer.data)
 
     @action(detail=False, methods=['get'], url_path='customer')
     def customer_profile(self, request):
-        """
-        List all customer user profiles.
-
-        Returns:
-            Response: List of customer profiles
-        """
         profiles = UserProfile.objects.filter(type='customer')
         serializer = CustomerProfileListSerializer(profiles, many=True)
         return Response(serializer.data)
@@ -154,31 +122,22 @@ class OfferViewSet(viewsets.ModelViewSet):
     """
     ViewSet for Offer CRUD operations.
 
-    Supports search, ordering, and filtering by creator and delivery time.
+    GET /api/offers/ is paginated (PageNumberPagination) per doc.
     """
 
     queryset = Offer.objects.all()
     pagination_class = PageNumberPagination
-    # Serializer is selected dynamically per action to match Endpoint-Doku exactly.
     serializer_class = OfferListSerializer
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['title', 'description']
-    # Doku: ordering supports 'updated_at' or 'min_price'
-    ordering_fields = ['updated_at', 'min_price']
+    ordering_fields = ['updated_at', 'min_price']  # doc
 
     def get_queryset(self):
-        """
-        Get filtered queryset based on query parameters.
-
-        Supports filtering by creator_id and max_delivery_time.
-
-        Returns:
-            QuerySet: Filtered Offer queryset
-        """
         queryset = Offer.objects.all().annotate(
             min_price=Min('details__price'),
             min_delivery_time=Min('details__delivery_time_in_days'),
         )
+
         creator_id = self.request.query_params.get('creator_id')
         min_price = self.request.query_params.get('min_price')
         max_delivery_time = self.request.query_params.get('max_delivery_time')
@@ -200,50 +159,33 @@ class OfferViewSet(viewsets.ModelViewSet):
         return queryset
 
     def get_serializer_class(self):
-        """Return serializer per action (exact response shapes per doc)."""
         if self.action == 'list':
             return OfferListSerializer
         if self.action == 'retrieve':
             return OfferRetrieveSerializer
-        # POST and PATCH must return the full details objects per doc
         if self.action in ['create', 'update', 'partial_update']:
             return OfferWriteSerializer
         return OfferListSerializer
 
     def get_permissions(self):
-        """Match endpoint documentation exactly for auth requirements."""
         if self.action == 'list':
             return [AllowAny()]
         return [IsAuthenticated()]
 
-    def perform_create(self, serializer):
-        """
-        Save offer with current user as creator.
-
-        Args:
-            serializer: Validated OfferSerializer instance
-        """
-        # Doku: nur Business-User dürfen Offers erstellen
+    def create(self, request, *args, **kwargs):
+        # Doc: only business can create offers
         try:
-            if self.request.user.profile.type != 'business':
-                return Response(
-                    {'detail': "Only users with type 'business' may create offers."},
-                    status=status.HTTP_403_FORBIDDEN,
-                )
+            profile = UserProfile.objects.get(user=request.user)
         except UserProfile.DoesNotExist:
             return Response({'detail': 'UserProfile not found.'}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer.save(creator=self.request.user)
+        if profile.type != 'business':
+            return Response(
+                {'detail': "Only users with type 'business' may create offers."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
-    def create(self, request, *args, **kwargs):
-        # perform_create may return a Response (permission error)
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        maybe_response = self.perform_create(serializer)
-        if isinstance(maybe_response, Response):
-            return maybe_response
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return super().create(request, *args, **kwargs)
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -261,8 +203,6 @@ class OfferViewSet(viewsets.ModelViewSet):
 class OfferDetailViewSet(viewsets.ReadOnlyModelViewSet):
     """
     Read-only ViewSet for OfferDetail.
-
-    Provides endpoints for viewing individual offer pricing tiers.
     """
 
     queryset = OfferDetail.objects.all()
@@ -274,22 +214,17 @@ class OrderViewSet(viewsets.ModelViewSet):
     """
     ViewSet for Order CRUD operations.
 
-    Users can only view and manage their own orders.
-    Pagination is disabled for complete order history.
+    Doc: GET /api/orders/ returns ARRAY (no pagination)
+    Doc: POST /api/orders/ only customer
+    Doc: PATCH /api/orders/{id}/ only business (offer creator)
     """
 
     queryset = Order.objects.all()
-    pagination_class = PageNumberPagination
+    pagination_class = None  # doc: array
     serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        """
-        Get orders for current user only.
-
-        Returns:
-            QuerySet: User's orders (both as customer and business)
-        """
         user = self.request.user
         return Order.objects.filter(
             Q(buyer=user) |
@@ -297,24 +232,21 @@ class OrderViewSet(viewsets.ModelViewSet):
         )
 
     def perform_create(self, serializer):
-        """
-        Save order with current user as buyer.
+        # Doc: only customer can create orders
+        try:
+            profile = UserProfile.objects.get(user=self.request.user)
+        except UserProfile.DoesNotExist:
+            raise PermissionDenied('UserProfile not found.')
 
-        Args:
-            serializer: Validated OrderSerializer instance
-        """
+        if profile.type != 'customer':
+            raise PermissionDenied("Only users with type 'customer' may create orders.")
+
         serializer.save(buyer=self.request.user)
 
     def update(self, request, *args, **kwargs):
-        """
-        Update order status (only business users can update their orders).
-
-        Returns:
-            Response: Updated order or error
-        """
         instance = self.get_object()
 
-        # Only business user (offer creator) can update order status
+        # Doc: only business (offer creator) can update order status
         if instance.offer_detail.offer.creator != request.user:
             return Response(
                 {'detail': 'You do not have permission to update this order.'},
@@ -328,26 +260,19 @@ class ReviewViewSet(viewsets.ModelViewSet):
     """
     ViewSet for Review CRUD operations.
 
-    Supports filtering by business_user_id and reviewer_id.
-    Pagination enabled for API consistency.
+    Doc: GET /api/reviews/ returns ARRAY (no pagination)
+    Doc: ordering only by 'updated_at' or 'rating'
+    Doc: POST only customer + only one review per business_user per reviewer
     """
 
     queryset = Review.objects.all()
-    pagination_class = PageNumberPagination
+    pagination_class = None  # doc: array
     serializer_class = ReviewSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [filters.OrderingFilter]
-    ordering_fields = ['created_at', 'rating']
+    ordering_fields = ['updated_at', 'rating']  # doc
 
     def get_queryset(self):
-        """
-        Get filtered queryset based on query parameters.
-
-        Supports filtering by business_user_id and reviewer_id.
-
-        Returns:
-            QuerySet: Filtered Review queryset
-        """
         queryset = Review.objects.all()
         business_user_id = self.request.query_params.get('business_user_id')
         reviewer_id = self.request.query_params.get('reviewer_id')
@@ -360,33 +285,32 @@ class ReviewViewSet(viewsets.ModelViewSet):
         return queryset
 
     def perform_create(self, serializer):
-        """
-        Save review with current user as reviewer.
+        # Doc: only customer can create reviews
+        try:
+            profile = UserProfile.objects.get(user=self.request.user)
+        except UserProfile.DoesNotExist:
+            raise PermissionDenied('UserProfile not found.')
 
-        Args:
-            serializer: Validated ReviewSerializer instance
-        """
+        if profile.type != 'customer':
+            raise PermissionDenied("Only users with a customer profile may create reviews.")
+
+        business_user = serializer.validated_data.get('business_user')
+        if business_user is None:
+            raise ValidationError({'business_user': 'This field is required.'})
+
+        # Doc: one review per business per reviewer
+        if Review.objects.filter(business_user=business_user, reviewer=self.request.user).exists():
+            # Doku nennt 400/403 je nach Text – wir nehmen 400 (Bad Request) wie beschrieben möglich
+            raise ValidationError({'detail': 'You have already reviewed this business user.'})
+
         serializer.save(reviewer=self.request.user)
 
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def order_count_view(request, business_user_id):
-    """
-    Get count of in-progress orders for a business user.
-
-    Args:
-        request: GET request
-        profile_id: ID of business user profile
-
-    Returns:
-        Response: Order count or 404 if profile not found
-    """
     if not User.objects.filter(id=business_user_id).exists():
-        return Response(
-            {'error': 'User not found'},
-            status=status.HTTP_404_NOT_FOUND
-        )
+        return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
     count = Order.objects.filter(
         offer_detail__offer__creator_id=business_user_id,
@@ -398,45 +322,19 @@ def order_count_view(request, business_user_id):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def completed_order_count_view(request, business_user_id):
-    """
-    Get count of completed orders for a business user.
-
-    Args:
-        request: GET request
-        profile_id: ID of business user profile
-
-    Returns:
-        Response: Order count or 404 if profile not found
-    """
     if not User.objects.filter(id=business_user_id).exists():
-        return Response(
-            {'error': 'User not found'},
-            status=status.HTTP_404_NOT_FOUND
-        )
+        return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
     count = Order.objects.filter(
         offer_detail__offer__creator_id=business_user_id,
         status='completed'
     ).count()
-    # Doku: exakt dieser Key
     return Response({'completed_order_count': count})
 
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def base_info_view(request):
-    """
-    Get platform statistics.
-
-    Returns review count, average rating, business profile count and offer count
-    per API documentation.
-
-    Args:
-        request: GET request
-
-    Returns:
-        Response: Platform statistics
-    """
     from django.db.models import Avg
 
     reviews = Review.objects.all()
