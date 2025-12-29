@@ -63,7 +63,9 @@ class OfferViewSet(viewsets.ModelViewSet):
 
         if min_price:
             try:
-                queryset = queryset.filter(details__price__gte=min_price)
+                queryset = queryset.filter(
+                    details__price__gte=min_price
+                ).distinct() 
             except Exception:
                 pass
 
