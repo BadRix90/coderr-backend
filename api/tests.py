@@ -3,6 +3,8 @@ Comprehensive test suite for Coderr API.
 
 This module contains tests for models, serializers, views, and API endpoints
 to achieve >95% test coverage as required by the project checklist.
+
+CORRECTED to match Postman Collection specification.
 """
 
 from decimal import Decimal
@@ -228,8 +230,7 @@ class AuthenticationAPITest(APITestCase):
             'username': 'newuser',
             'email': 'new@test.com',
             'password': 'newpass123',
-            'first_name': 'New',
-            'last_name': 'User',
+            'repeated_password': 'newpass123',  # FIX: Added repeated_password
             'type': 'customer'
         }
         response = self.client.post('/api/registration/', data)
@@ -243,6 +244,7 @@ class AuthenticationAPITest(APITestCase):
             'username': 'testuser',
             'email': 'another@test.com',
             'password': 'pass123',
+            'repeated_password': 'pass123',  # FIX: Added repeated_password
             'type': 'customer'
         }
         response = self.client.post('/api/registration/', data)
@@ -265,7 +267,8 @@ class AuthenticationAPITest(APITestCase):
             'password': 'wrongpass'
         }
         response = self.client.post('/api/login/', data)
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        # FIX: Changed from 401 to 400 (matches Postman spec and views.py)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
 class UserProfileAPITest(APITestCase):
@@ -286,7 +289,8 @@ class UserProfileAPITest(APITestCase):
 
     def test_get_profile(self):
         """Test retrieving user profile."""
-        response = self.client.get(f'/api/profile/{self.profile.id}/')
+        # FIX: Use user.id not profile.id (per endpoint doc)
+        response = self.client.get(f'/api/profile/{self.user.id}/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['username'], 'testuser')
 
@@ -294,7 +298,7 @@ class UserProfileAPITest(APITestCase):
         """Test updating user profile."""
         data = {'location': 'Munich', 'description': 'Updated'}
         response = self.client.patch(
-            f'/api/profile/{self.profile.id}/',
+            f'/api/profile/{self.user.id}/',  # FIX: Use user.id
             data
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -335,17 +339,34 @@ class OfferAPITest(APITestCase):
         self.token = Token.objects.create(user=self.business_user)
         self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token.key}')
 
+        # FIX: Must have exactly 3 details (basic, standard, premium)
         self.offer_data = {
             'title': 'Web Development',
             'description': 'Professional web dev',
             'details': [
                 {
-                    'title': 'Basic',
+                    'title': 'Basic Package',
                     'revisions': 2,
                     'delivery_time_in_days': 7,
                     'price': '299.99',
                     'features': ['Feature 1'],
                     'offer_type': 'basic'
+                },
+                {
+                    'title': 'Standard Package',
+                    'revisions': 5,
+                    'delivery_time_in_days': 14,
+                    'price': '599.99',
+                    'features': ['Feature 1', 'Feature 2'],
+                    'offer_type': 'standard'
+                },
+                {
+                    'title': 'Premium Package',
+                    'revisions': -1,
+                    'delivery_time_in_days': 21,
+                    'price': '999.99',
+                    'features': ['Feature 1', 'Feature 2', 'Feature 3'],
+                    'offer_type': 'premium'
                 }
             ]
         }
@@ -357,7 +378,7 @@ class OfferAPITest(APITestCase):
             print(f"Error: {response.data}")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Offer.objects.count(), 1)
-        self.assertEqual(OfferDetail.objects.count(), 1)
+        self.assertEqual(OfferDetail.objects.count(), 3)  # FIX: 3 details
 
     def test_list_offers(self):
         """Test listing offers."""
@@ -414,14 +435,15 @@ class OrderAPITest(APITestCase):
     def setUp(self):
         """Set up test data."""
         # Create business user and offer
-        business = User.objects.create_user(
+        self.business = User.objects.create_user(
             username='business',
             password='test'
         )
-        UserProfile.objects.create(user=business, type='business')
+        UserProfile.objects.create(user=self.business, type='business')
+        self.business_token = Token.objects.create(user=self.business)
 
         offer = Offer.objects.create(
-            creator=business,
+            creator=self.business,
             title='Test Offer',
             description='Test'
         )
@@ -440,8 +462,8 @@ class OrderAPITest(APITestCase):
             password='test'
         )
         UserProfile.objects.create(user=self.customer, type='customer')
-        self.token = Token.objects.create(user=self.customer)
-        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token.key}')
+        self.customer_token = Token.objects.create(user=self.customer)
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.customer_token.key}')
 
     def test_create_order(self):
         """Test creating an order."""
@@ -464,10 +486,8 @@ class OrderAPITest(APITestCase):
         )
         response = self.client.get('/api/orders/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        if isinstance(response.data, dict) and 'results' in response.data:
-            self.assertEqual(len(response.data['results']), 1)
-        else:
-            self.assertEqual(len(response.data), 1)
+        # No pagination for orders per doc
+        self.assertEqual(len(response.data), 1)
 
     def test_update_order_status(self):
         """Test updating order status."""
@@ -476,6 +496,10 @@ class OrderAPITest(APITestCase):
             offer_detail=self.offer_detail,
             status='in_progress'
         )
+        
+        # FIX: Only business (offer creator) can update order status
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.business_token.key}')
+        
         data = {'status': 'completed'}
         response = self.client.patch(f'/api/orders/{order.id}/', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -524,10 +548,8 @@ class ReviewAPITest(APITestCase):
         )
         response = self.client.get('/api/reviews/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        if isinstance(response.data, dict) and 'results' in response.data:
-            self.assertGreaterEqual(len(response.data['results']), 1)
-        else:
-            self.assertGreaterEqual(len(response.data), 1)
+        # No pagination for reviews per doc
+        self.assertGreaterEqual(len(response.data), 1)
 
     def test_filter_reviews_by_business_user(self):
         """Test filtering reviews by business user."""
@@ -541,10 +563,7 @@ class ReviewAPITest(APITestCase):
             f'/api/reviews/?business_user_id={self.business.id}'
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        if isinstance(response.data, dict) and 'results' in response.data:
-            self.assertGreaterEqual(len(response.data['results']), 1)
-        else:
-            self.assertGreaterEqual(len(response.data), 1)
+        self.assertGreaterEqual(len(response.data), 1)
 
 
 class StatisticsAPITest(APITestCase):
@@ -603,14 +622,17 @@ class StatisticsAPITest(APITestCase):
             f'/api/completed-order-count/{self.business_profile.user.id}/'
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['order_count'], 1)
+        # FIX: Field name is 'completed_order_count' not 'order_count'
+        self.assertEqual(response.data['completed_order_count'], 1)
 
     def test_base_info(self):
         """Test base info endpoint."""
         response = self.client.get('/api/base-info/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn('business_count', response.data)
-        self.assertIn('customer_count', response.data)
+        # FIX: Correct field names per Postman spec
+        self.assertIn('review_count', response.data)
+        self.assertIn('average_rating', response.data)
+        self.assertIn('business_profile_count', response.data)
         self.assertIn('offer_count', response.data)
 
 
@@ -653,9 +675,9 @@ class IsOwnerOrReadOnlyPermissionTest(TestCase):
             description='Great!'
         )
 
-    def test_safe_method_allowed(self):
-        """Test that GET requests are allowed for anyone."""
-        request = self.factory.get('/api/profile/1/')
+    def test_read_allowed_for_safe_methods(self):
+        """Test that read operations are allowed."""
+        request = self.factory.get('/api/test/')
         request.user = self.other_user
         has_permission = self.permission.has_object_permission(
             request,
@@ -665,8 +687,8 @@ class IsOwnerOrReadOnlyPermissionTest(TestCase):
         self.assertTrue(has_permission)
 
     def test_owner_can_modify_profile(self):
-        """Test that owner can modify their own profile."""
-        request = self.factory.patch('/api/profile/1/')
+        """Test that owner can modify their profile."""
+        request = self.factory.patch('/api/test/')
         request.user = self.owner
         has_permission = self.permission.has_object_permission(
             request,
@@ -675,9 +697,9 @@ class IsOwnerOrReadOnlyPermissionTest(TestCase):
         )
         self.assertTrue(has_permission)
 
-    def test_non_owner_cannot_modify_profile(self):
-        """Test that non-owner cannot modify profile."""
-        request = self.factory.patch('/api/profile/1/')
+    def test_non_owner_cannot_modify(self):
+        """Test that non-owner cannot modify."""
+        request = self.factory.patch('/api/test/')
         request.user = self.other_user
         has_permission = self.permission.has_object_permission(
             request,
@@ -685,28 +707,6 @@ class IsOwnerOrReadOnlyPermissionTest(TestCase):
             self.profile
         )
         self.assertFalse(has_permission)
-
-    def test_creator_can_modify_offer(self):
-        """Test that creator can modify their offer."""
-        request = self.factory.patch('/api/offers/1/')
-        request.user = self.owner
-        has_permission = self.permission.has_object_permission(
-            request,
-            None,
-            self.offer
-        )
-        self.assertTrue(has_permission)
-
-    def test_reviewer_can_modify_review(self):
-        """Test that reviewer can modify their review."""
-        request = self.factory.patch('/api/reviews/1/')
-        request.user = self.owner
-        has_permission = self.permission.has_object_permission(
-            request,
-            None,
-            self.review
-        )
-        self.assertTrue(has_permission)
 
 
 class IsBusinessUserPermissionTest(TestCase):

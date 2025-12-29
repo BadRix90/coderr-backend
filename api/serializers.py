@@ -54,28 +54,22 @@ class ProfileDetailSerializer(_ProfileStringDefaultsMixin, serializers.ModelSeri
         read_only_fields = ['user', 'username', 'created_at']
 
     def update(self, instance, validated_data):
-        """
-        Update UserProfile and related User fields.
-        """
-        # FIX: email kommt als Top-Level field (source='user.email'), nicht im user dict
-        email = validated_data.pop('email', None)
-
+        """Update UserProfile and related User fields."""
         user_data = validated_data.pop('user', {})
-
+        
         user = instance.user
-        if user_data:
-            user.first_name = user_data.get('first_name', user.first_name)
-            user.last_name = user_data.get('last_name', user.last_name)
-
-        if email is not None:
-            user.email = email
-
+        if 'email' in user_data:
+            user.email = user_data['email']
+        if 'first_name' in user_data:
+            user.first_name = user_data['first_name']
+        if 'last_name' in user_data:
+            user.last_name = user_data['last_name']
         user.save()
-
+        
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
-
+        
         return instance
 
 

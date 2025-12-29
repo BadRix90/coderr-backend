@@ -43,7 +43,7 @@ def login_view(request):
 
     user = authenticate(username=username, password=password)
     if not user:
-        return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
 
     token, _ = Token.objects.get_or_create(user=user)
     return Response({
@@ -118,6 +118,11 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
+class OfferPagination(PageNumberPagination):
+    page_size = 6
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
 class OfferViewSet(viewsets.ModelViewSet):
     """
     ViewSet for Offer CRUD operations.
@@ -126,7 +131,7 @@ class OfferViewSet(viewsets.ModelViewSet):
     """
 
     queryset = Offer.objects.all()
-    pagination_class = PageNumberPagination
+    pagination_class = OfferPagination
     serializer_class = OfferListSerializer
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['title', 'description']
@@ -226,9 +231,11 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return Order.objects.filter(
-            Q(buyer=user) |
-            Q(offer_detail__offer__creator=user)
+        return Order.objects.select_related(
+            'buyer',
+            'offer_detail__offer__creator'
+        ).filter(
+            Q(buyer=user) | Q(offer_detail__offer__creator=user)
         )
 
     def perform_create(self, serializer):
