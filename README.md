@@ -20,10 +20,17 @@ Django REST API for Coderr - A Freelancer Platform
 - Pagination & Filtering
 
 ## Installation
+
 ```bash
 # Clone repository
 git clone https://github.com/BadRix90/coderr-backend.git
 cd coderr-backend
+
+# Create and activate virtual environment
+python -m venv venv
+venv\Scripts\activate  # Windows
+# oder
+source venv/bin/activate  # Linux/Mac
 
 # Install dependencies
 pip install -r requirements.txt
@@ -42,16 +49,19 @@ python manage.py runserver
 ## API Endpoints
 
 ### Authentication
+
 - `POST /api/login/` - User login
 - `POST /api/registration/` - User registration
 
 ### Profiles
+
 - `GET /api/profile/{id}/` - Get user profile
 - `PATCH /api/profile/{id}/` - Update user profile
 - `GET /api/profiles/business/` - List business profiles
 - `GET /api/profiles/customer/` - List customer profiles
 
 ### Offers
+
 - `GET /api/offers/` - List offers (with pagination & filters)
 - `POST /api/offers/` - Create offer
 - `GET /api/offers/{id}/` - Get offer details
@@ -60,6 +70,7 @@ python manage.py runserver
 - `GET /api/offerdetails/{id}/` - Get offer detail
 
 ### Orders
+
 - `GET /api/orders/` - List user's orders
 - `POST /api/orders/` - Create order
 - `PATCH /api/orders/{id}/` - Update order status
@@ -67,25 +78,30 @@ python manage.py runserver
 - `GET /api/completed-order-count/{user_id}/` - Get completed order count
 
 ### Reviews
+
 - `GET /api/reviews/` - List reviews (with filters)
 - `POST /api/reviews/` - Create review
 - `PATCH /api/reviews/{id}/` - Update review
 
 ### Stats
+
 - `GET /api/base-info/` - Get platform statistics
 
 ## Testing with Postman
 
 Import the included Postman collection and environment:
+
 - `Coderr API.postman_collection.json`
 - `Coderr Local.postman_environment.json`
 
 ### Test Credentials
+
 - **Customer:** `andrey` / `asdasd`
 - **Business:** `kevin` / `asdasd24`
 - **Admin:** `Admin` / `Test1234`
 
 ## Project Structure
+
 ```
 backend/
 ├── api/                    # Main API app
