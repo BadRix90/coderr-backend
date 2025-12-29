@@ -297,7 +297,7 @@ class OrderSerializer(serializers.ModelSerializer):
         return obj.offer_detail.offer.creator.id
 
     def get_title(self, obj):
-        return obj.offer_detail.offer.title
+        return obj.offer_detail.title
 
     def get_delivery_time_in_days(self, obj):
         return obj.offer_detail.delivery_time_in_days

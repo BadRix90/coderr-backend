@@ -157,11 +157,13 @@ class OfferViewSet(viewsets.ModelViewSet):
                 pass
 
         if max_delivery_time:
-            queryset = queryset.filter(
-                details__delivery_time_in_days__lte=max_delivery_time
-            ).distinct()
-
-        return queryset
+            try:
+                max_delivery_time = int(max_delivery_time)
+                queryset = queryset.filter(
+                    details__delivery_time_in_days__lte=max_delivery_time
+                ).distinct()
+            except (ValueError, TypeError):
+                pass
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -307,7 +309,6 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
         # Doc: one review per business per reviewer
         if Review.objects.filter(business_user=business_user, reviewer=self.request.user).exists():
-            # Doku nennt 400/403 je nach Text – wir nehmen 400 (Bad Request) wie beschrieben möglich
             raise ValidationError({'detail': 'You have already reviewed this business user.'})
 
         serializer.save(reviewer=self.request.user)
