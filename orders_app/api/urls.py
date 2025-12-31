@@ -7,8 +7,8 @@ from rest_framework.routers import DefaultRouter
 
 from .views import (
     OrderViewSet,
-    order_count_view,
-    completed_order_count_view,
+    OrderCountView,
+    CompletedOrderCountView,
 )
 
 # Router for ViewSets
@@ -16,15 +16,15 @@ router = DefaultRouter()
 router.register(r'orders', OrderViewSet, basename='orders')
 
 urlpatterns = [
-    # Order count endpoints
+    # Order count endpoints - GENERIC VIEWS
     path(
         'order-count/<int:business_user_id>/', 
-        order_count_view, 
+        OrderCountView.as_view(), 
         name='order-count'
     ),
     path(
         'completed-order-count/<int:business_user_id>/', 
-        completed_order_count_view, 
+        CompletedOrderCountView.as_view(), 
         name='completed-order-count'
     ),
     

@@ -9,11 +9,11 @@ This module contains order-related views.
 
 # Third-party
 from django.contrib.auth.models import User
-from django.db.models import Avg, Q
+from django.db.models import Q
 from rest_framework import status, viewsets
-from rest_framework.decorators import api_view, permission_classes
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.generics import RetrieveAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 # Local
@@ -32,7 +32,7 @@ class OrderViewSet(viewsets.ModelViewSet):
     """
 
     queryset = Order.objects.all()
-    pagination_class = None  # doc: array
+    pagination_class = None
     serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
 
@@ -64,7 +64,6 @@ class OrderViewSet(viewsets.ModelViewSet):
         """Update order - only business (offer creator) allowed."""
         instance = self.get_object()
 
-        # Doc: only business (offer creator) can update order status
         if instance.offer_detail.offer.creator != request.user:
             return Response(
                 {'detail': 'You do not have permission to update this order.'},
@@ -74,43 +73,45 @@ class OrderViewSet(viewsets.ModelViewSet):
         return super().update(request, *args, **kwargs)
 
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def order_count_view(request, business_user_id):
-    """
-    Get count of in-progress orders for a business user.
+class OrderCountView(RetrieveAPIView):
+    """Get count of in-progress orders for a business user."""
     
-    Endpoint: GET /api/order-count/{business_user_id}/
-    """
-    if not User.objects.filter(id=business_user_id).exists():
-        return Response(
-            {'error': 'User not found'}, 
-            status=status.HTTP_404_NOT_FOUND
-        )
-
-    count = Order.objects.filter(
-        offer_detail__offer__creator_id=business_user_id,
-        status='in_progress'
-    ).count()
-    return Response({'order_count': count})
-
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def completed_order_count_view(request, business_user_id):
-    """
-    Get count of completed orders for a business user.
+    permission_classes = [IsAuthenticated]
     
-    Endpoint: GET /api/completed-order-count/{business_user_id}/
-    """
-    if not User.objects.filter(id=business_user_id).exists():
-        return Response(
-            {'error': 'User not found'}, 
-            status=status.HTTP_404_NOT_FOUND
-        )
+    def retrieve(self, request, *args, **kwargs):
+        business_user_id = self.kwargs.get('business_user_id')
+        
+        if not User.objects.filter(id=business_user_id).exists():
+            return Response(
+                {'error': 'User not found'}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        count = Order.objects.filter(
+            offer_detail__offer__creator_id=business_user_id,
+            status='in_progress'
+        ).count()
+        
+        return Response({'order_count': count})
 
-    count = Order.objects.filter(
-        offer_detail__offer__creator_id=business_user_id,
-        status='completed'
-    ).count()
-    return Response({'completed_order_count': count})
+
+class CompletedOrderCountView(RetrieveAPIView):
+    """Get count of completed orders for a business user."""
+    
+    permission_classes = [IsAuthenticated]
+    
+    def retrieve(self, request, *args, **kwargs):
+        business_user_id = self.kwargs.get('business_user_id')
+        
+        if not User.objects.filter(id=business_user_id).exists():
+            return Response(
+                {'error': 'User not found'}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        count = Order.objects.filter(
+            offer_detail__offer__creator_id=business_user_id,
+            status='completed'
+        ).count()
+        
+        return Response({'completed_order_count': count})

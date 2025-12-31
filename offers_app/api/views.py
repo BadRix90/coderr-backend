@@ -63,11 +63,15 @@ class OfferViewSet(viewsets.ModelViewSet):
 
         if min_price:
             try:
+                min_price = float(min_price)
                 queryset = queryset.filter(
                     details__price__gte=min_price
-                ).distinct() 
-            except Exception:
-                pass
+                ).distinct()
+            except (ValueError, TypeError):
+                from rest_framework.exceptions import ValidationError
+                raise ValidationError({
+                    'min_price': 'Must be a valid number'
+                })
 
         if max_delivery_time:
             try:
@@ -76,9 +80,12 @@ class OfferViewSet(viewsets.ModelViewSet):
                     details__delivery_time_in_days__lte=max_delivery_time
                 ).distinct()
             except (ValueError, TypeError):
-                pass
-
-        return queryset
+                from rest_framework.exceptions import ValidationError
+                raise ValidationError({
+                    'max_delivery_time': 'Must be a valid integer'
+                })
+        
+        return queryset 
 
     def get_serializer_class(self):
         """Return appropriate serializer based on action."""
